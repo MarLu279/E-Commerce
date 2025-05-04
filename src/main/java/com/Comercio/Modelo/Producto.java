@@ -32,6 +32,9 @@ public class Producto {
     }
 
     public void setIdProducto(int idProducto) {
+        if(idProducto < 0){
+            throw new IllegalArgumentException("El id no puede ser negativo");
+        }
         this.idProducto = idProducto;
     }
 
@@ -40,6 +43,9 @@ public class Producto {
     }
 
     public void setNombre(String nombre) {
+        if(nombre == null || nombre.trim().isEmpty()){
+            throw new IllegalArgumentException("El nombre del producto no puede estar vacio");
+        }
         this.nombre = nombre;
     }
 
@@ -56,6 +62,9 @@ public class Producto {
     }
 
     public void setPrecio(double precio) {
+        if(precio < 0){
+            throw new IllegalArgumentException("El precio del producto no debe de ser negativo");
+        }
         this.precio = precio;
     }
 
@@ -64,6 +73,9 @@ public class Producto {
     }
 
     public void setStock(int stock) {
+        if(stock < 0){
+            throw new IllegalArgumentException("El stock no puede ser negativo");
+        }
         this.stock = stock;
     }
 

@@ -14,6 +14,9 @@ import java.util.List;
 public class ProductoDAOImp implements IProductoDAO{
     @Override
     public void insertar(Producto producto) throws SQLException {
+        if(producto == null){
+            throw new IllegalArgumentException("[ERROR] El producto no puede ser nulo");
+        }
         String sql = "INSERT INTO producto(nombre, descripcion, precio, stock) "
                     + "VALUES(?, ?, ?, ?)";
         try(Connection conn = ConexionBaseDatos.getConnection();
@@ -78,6 +81,9 @@ public class ProductoDAOImp implements IProductoDAO{
 
     @Override
     public void actualizar(Producto producto) throws SQLException {
+        if(producto == null){
+            throw new IllegalArgumentException("[ERROR] El producto no puede ser nulo");
+        }
         String sql = "UPDATE producto SET nombre = ?, descripcion = ?, precio = ?, stock = ? "
                 + "WHERE idProducto = ?";
         try(Connection conn = ConexionBaseDatos.getConnection();
