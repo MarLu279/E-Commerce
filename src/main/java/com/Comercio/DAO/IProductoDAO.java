@@ -2,7 +2,6 @@ package com.Comercio.DAO;
 
 import com.Comercio.Modelo.Producto;
 
-import javax.swing.plaf.ProgressBarUI;
 import java.sql.SQLException;
 import java.util.List;
 
