@@ -217,7 +217,7 @@ public class MenuPrincipal {
     }
 
     private static void buscarProductoId(Scanner entrada, IProductoDAO servicioProducto) {
-        Producto producto = null;
+        Producto producto;
         System.out.println("Escribe el id del producto a buscar: ");
         int id = Integer.parseInt(entrada.nextLine());
         try {
