@@ -1,7 +1,10 @@
 package com.Comercio.Presentacion;
 
+import com.Comercio.DAO.IProductoDAO;
 import com.Comercio.DAO.IUsuarioDAO;
+import com.Comercio.DAO.ProductoDAOImp;
 import com.Comercio.DAO.UsuarioDAOImp;
+import com.Comercio.Modelo.Producto;
 import com.Comercio.Modelo.Usuario;
 
 import java.sql.SQLException;
@@ -12,34 +15,9 @@ public class MenuPrincipal {
     public static void main(String[] args) {
         Scanner entrada = new Scanner(System.in);
         IUsuarioDAO servicioUsuario = new UsuarioDAOImp();
-        boolean bandera = false;
+        IProductoDAO servicioProducto = new ProductoDAOImp();
+        login(entrada, servicioUsuario, servicioProducto);
 
-        while (!bandera){
-            System.out.println("""
-                *** Selececciona la opcion a realizar ***
-                1. Lista de usuarios
-                2. Ingresar usuario
-                3. Buscar usuario por id
-                4. Buscar usuario por email
-                5. Actualizar usuario
-                6. Eliminar usuario
-                7. Salir
-                Opcion seleccionada:
-                """);
-            int opcion = Integer.parseInt(entrada.nextLine());
-            switch (opcion){
-                case 1 -> listarUsarios(servicioUsuario);
-                case 2 -> ingresarUsuario(entrada, servicioUsuario);
-                case 3 -> buscarUsuarioId(entrada, servicioUsuario);
-                case 4 -> buscarUsuarioEmail(entrada, servicioUsuario);
-                case 5 -> actualizarUsuario(entrada, servicioUsuario);
-                case 6 -> eliminarUsuario(entrada, servicioUsuario);
-                case 7 -> {
-                    System.out.println("Saliendo adios :D");
-                    bandera = true;
-                }
-            }
-        }
     }
     private static void ingresarUsuario(Scanner entrada, IUsuarioDAO servicioUsuario){
         System.out.println("*** Ingresar usuario ***");
@@ -143,5 +121,111 @@ public class MenuPrincipal {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void login(Scanner entrada, IUsuarioDAO servicioUsuario, IProductoDAO servicioProducto){
+        System.out.println("Escribe tu email: ");
+        String email = entrada.nextLine();
+        System.out.println("Escribe tu contraseña: ");
+        String password = entrada.nextLine();
+        try {
+            Usuario usuario = servicioUsuario.buscarUsuarioPorEmail(email);
+            if(Usuario.validarPassword(password)){
+                System.out.println("Bienvenido: " + usuario.getNombre());
+                if ((usuario.getRol().equals("admin"))) {
+                    menuAdmin(entrada, servicioUsuario);
+                    login(entrada, servicioUsuario,servicioProducto);
+                } else {
+                    menuCliente(entrada, servicioProducto);
+                    login(entrada, servicioUsuario,servicioProducto);
+                }
+            } else {
+                System.out.println("Credenciales incorrectas");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void menuAdmin(Scanner entrada, IUsuarioDAO servicioUsuario){
+        boolean bandera = false;
+        while (!bandera){
+            System.out.println("""
+                *** Selececciona la opcion a realizar ***
+                1. Lista de usuarios
+                2. Ingresar usuario
+                3. Buscar usuario por id
+                4. Buscar usuario por email
+                5. Actualizar usuario
+                6. Eliminar usuario
+                7. Salir
+                Opcion seleccionada:
+                """);
+            int opcion = Integer.parseInt(entrada.nextLine());
+            switch (opcion){
+                case 1 -> listarUsarios(servicioUsuario);
+                case 2 -> ingresarUsuario(entrada, servicioUsuario);
+                case 3 -> buscarUsuarioId(entrada, servicioUsuario);
+                case 4 -> buscarUsuarioEmail(entrada, servicioUsuario);
+                case 5 -> actualizarUsuario(entrada, servicioUsuario);
+                case 6 -> eliminarUsuario(entrada, servicioUsuario);
+                case 7 -> {
+                    System.out.println("Saliendo adios :D");
+                    bandera = true;
+                }
+            }
+        }
+    }
+
+    private static void menuCliente(Scanner entrada, IProductoDAO servicioProducto){
+        boolean bandera = false;
+        while(!bandera){
+            System.out.println("""
+                    *** Selecciona la opcion a realizar ***
+                    1. Lista de productos
+                    2. Buscar productos por Id
+                    3. Comprar
+                    4. Pagar
+                    5. Salir
+                    """);
+
+            int opcion = Integer.parseInt(entrada.nextLine());
+            switch (opcion) {
+                case 1 -> listaProductos(servicioProducto);
+                case 2 -> buscarProductoId(entrada, servicioProducto);
+                case 3 -> System.out.println("comprar");
+                case 4 -> System.out.println("pagar");
+                case 5 -> {
+                    System.out.println("Saliendo :D");
+                    bandera = true;
+                }
+            }
+        }
+    }
+
+    private static void listaProductos(IProductoDAO servicioProducto){
+        System.out.println("*** Lista de prodcuctos ***");
+        try {
+            List<Producto> productos = servicioProducto.listarProductos();
+            if(!productos.isEmpty()){
+                for(Producto producto : productos)
+                    System.out.println(producto);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void buscarProductoId(Scanner entrada, IProductoDAO servicioProducto) {
+        Producto producto = null;
+        System.out.println("Escribe el id del producto a buscar: ");
+        int id = Integer.parseInt(entrada.nextLine());
+        try {
+            producto = servicioProducto.buscarPorId(id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("El producto con id: " + id );
+        System.out.println(producto);
     }
 }

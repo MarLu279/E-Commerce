@@ -78,7 +78,7 @@ public class Usuario {
     }
 
     public void setPassword(String password) {
-        if(password == null || password.trim().isEmpty()){
+        if(!validarPassword(password)){
             throw new IllegalArgumentException("[ERROR] El password no puede estar vacio");
         }
         this.password = password;
@@ -93,6 +93,16 @@ public class Usuario {
             throw new IllegalArgumentException("[ERROR] El rol solo debe de ser admin o cliente");
         }
         this.rol = rol;
+    }
+
+    public static boolean validarPassword(String password){
+        if(password == null || password.trim().isEmpty()){
+            return false;
+        }
+        if(password.length() < 6){
+            return false;
+        }
+        return true;
     }
 
     @Override
